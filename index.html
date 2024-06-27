@@ -57,13 +57,63 @@
             
             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
         }
+
+        .blur{
+            filter: blur(8px);
+            opacity: 0.5;
+        }
+
+        .elevated {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: transparent;
+            width: 100%;
+            height: 100%;
+        }
+
+        .load-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: transparent;
+        }
+        
+        .elevated svg {
+            transition: .2s;
+        }
+
+        .elevated svg:hover {
+            cursor: pointer;
+            transform: scale(1.2);
+        }
+
+        @keyframes rotate { 
+            10% { transform: rotate(15deg); } 
+            15% { transform: rotate(-10deg); } 
+            20% { transform: rotate(5deg); } 
+            25% { transform: rotate(-5deg); } 
+            30% { transform: rotate(2deg); } 
+            35% { transform: rotate(-1deg); } 
+            40% { transform: rotate(0deg); } 
+        }
+
+        .error-rotation {
+            animation: .8s rotate;
+        }
     </style>
   </head>
   <body>
     <div class="container mt-3">
-        <h1 class="h1 display-3 text-center">Scegliere il profilo</h1>
-        <div class="profile-box mt-5 d-flex justify-content-center align-content-center">
+        
+        <div class="profile-box mt-5 d-flex justify-content-center align-content-center" id="profileBox">
+            
             <div class="row">
+                <div class="col-12 mb-4">
+                    <h1 class="h1 display-3 text-center">Scegliere il profilo</h1>
+                </div>
                 <div class="col">
                     <div id="user" class="card fr" style="--bs-card-border-color: none;">
                         <a href="home.html" class="m-auto"><img src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/CD05FF92A733E897568A4DF2C05D279892E1F9D19082F3BB55DE277E5A4BDC0E/scale?width=600&aspectRatio=1.00&format=png"  alt="..." width="150" height="150"></a>
@@ -84,7 +134,7 @@
                     <div id="user" class="card fh" style="--bs-card-border-color: none;">
                         <a href="home.html" class="m-auto"><img src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/5329AB2FC00C7AA6D367572991E897450519BA7A05B5A79DA2E128906E7E0834/scale?width=600&aspectRatio=1.00&format=png" class="m-auto" alt="..." width="150" height="150"></a>
                         <div class="card-body">
-                          <p class="card-text text-center h5">Vale</p>
+                          <p class="card-text text-center h5">Valentina</p>
                         </div>
                     </div>
                 </div>
@@ -100,9 +150,45 @@
                     <div id="user" class="card fhf" style="--bs-card-border-color: none;">
                         <a href="home.html" class="m-auto"><img src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/F967F43111A8CBAE452974291B7AAD41C070AC8DB5F4C1534923BB47CDCCCE50/scale?width=600&aspectRatio=1.00&format=png" class="m-auto" alt="..." width="150" height="150"></a>
                         <div class="card-body">
-                          <p class="card-text text-center h5">Franci</p>
+                          <p class="card-text text-center h5">Francesca</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="load-spinner d-none" id="loadSpinner">
+            <div class="spinner-border text-primary" style="width: 5rem; height: 5rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+        <div class="elevated d-none" id="elev">
+            <div class="row mt-3">
+                <div class="col-12 text-end">
+                    <div class="p-4" id="closeBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="col-12 text-center">
+                    <img id="elvImg" src="..." alt="" width="250" height="250" class="fh">
+                </div>
+                <div class="col-12 mt-3 text-center">
+                    <h1 id="elvName" class="h1 sc" style="font-size: 3rem;"></h3>
+                </div>
+                <div class="col-12 mt-2 text-center">
+                    <label class="form-label th" style="font-size: 1.4rem;">Inserisci la password</label>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <input type="password" id="pass" placeholder="Password" class="form-control fh" aria-describedby="passwordHelpBlock" style="max-width: 300px;" required>
+                    </div>
+                </div>
+                <div class="col-12 mt-2 text-center fhf">
+                    <button type="button" class="btn btn-primary rounded-4" id="accedi">
+                        <span role="status">Accedi</span>
+                        <span class="spinner-border spinner-border-sm d-none" aria-hidden="true" id="btnSpinner"></span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -114,9 +200,49 @@
         document.querySelectorAll('[id=user]').forEach((element) => {
             element.addEventListener('click', (event) => {
                 event.preventDefault();
-                localStorage.setItem('user', element.childNodes[3].childNodes[1].textContent);
-                window.location = 'home.html';
+                document.getElementById('profileBox').classList.add('blur');
+                document.getElementById('loadSpinner').classList.remove('d-none');
+                fetch('https://cocktaildb-api-1.onrender.com/getUser/'+element.childNodes[3].childNodes[1].textContent, {method: "GET"})
+                    .then((res) => res.json())
+                    .then((user) => {
+                        let passInpt = document.getElementById('pass');
+                        document.getElementById('loadSpinner').classList.add('d-none');
+                        document.getElementById('elev').classList.remove('d-none');
+                        document.getElementById('elvImg').src = `img/${(user.nome).toLowerCase()}.png`;
+                        document.getElementById('elvName').textContent = user.nome;
+                        passInpt.classList.remove('error-rotation');
+                        document.getElementById('accedi').addEventListener('click', (event) => {
+                            event.preventDefault();
+                            document.getElementById('btnSpinner').classList.remove('d-none');
+                            const data = { nome: user.nome, password: passInpt.value };
+                            fetch('https://cocktaildb-api-1.onrender.com/login', {
+                                method: "POST",
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify(data)
+                            }).then((res) => {
+                                if (!res.ok) {
+                                    console.log('Sbagliato password');
+                                    document.getElementById('btnSpinner').classList.add('d-none');
+                                    passInpt.classList.add('error-rotation');
+                                    passInpt.style.animation = 'none';
+                                    passInpt.offsetHeight;
+                                    passInpt.style.animation = null;
+                                } else {
+                                    localStorage.setItem('user', user.nome);
+                                    window.location = 'home.html';
+                                }
+                            })
+                        });
+                        
+                    }).catch((err) => console.error(err));
             });
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', (event) => {
+            event.preventDefault();
+            document.getElementById('elev').classList.add('d-none');
+            document.getElementById('profileBox').classList.remove('blur');
+            document.getElementById('pass').value = "";
         });
     </script>
   </body>

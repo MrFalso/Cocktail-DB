@@ -1,0 +1,32 @@
+[
+    {
+        "nome": "Tedi",
+        "username": "Teddy",
+        "password": "",
+        "drink_preferiti": []
+    },
+    {
+        "nome": "Elisa",
+        "username": "Luv.Eli",
+        "password": "",
+        "drink_preferiti": []
+    },
+    {
+        "nome": "Valentina",
+        "username": "Vale",
+        "password": "",
+        "drink_preferiti": []
+    },
+    {
+        "nome": "Ilyas",
+        "username": "K.Ilyas",
+        "password": "",
+        "drink_preferiti": []
+    },
+    {
+        "nome": "Francesca",
+        "username": "Franci",
+        "password": "",
+        "drink_preferiti": []
+    }
+]

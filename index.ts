@@ -51,9 +51,21 @@ function showInfo(drink: Node) {
 
 
 function addDrink(node: Node) {
-    console.log(node);
     let x: HTMLElement | null = (document.getElementById("snackbar") as HTMLElement);
-    console.log(node.childNodes[1].textContent);
+    const data: {} = {
+        id_drink: node.childNodes[node.childNodes.length-2].textContent,
+        nome_utente: localStorage.getItem('user')
+     };
+    
+    fetch('https://cocktaildb-api-1.onrender.com/addDrink', {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then((res) => {
+        if (!res.ok) {
+            console.log("Errore");
+        }
+    })
     x.innerHTML = (node.childNodes[1].textContent as string)+" è stato aggiunto ai ❤️";
     x.className = "show";
     setTimeout(function(){ 
